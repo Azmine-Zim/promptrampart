@@ -1,8 +1,8 @@
 """End-to-end tests for the runner using the offline mock adapter."""
 
-from promptarmor.config import TargetConfig
-from promptarmor.pack import load_pack
-from promptarmor.runner import run_pack
+from promptrampart.config import TargetConfig
+from promptrampart.pack import load_pack
+from promptrampart.runner import run_pack
 
 
 def mock_config():
@@ -20,7 +20,7 @@ def test_run_pack_completes_all_attacks():
 def test_run_pack_plants_canary_in_system_prompt():
     pack = load_pack("core")
     run = run_pack(mock_config(), pack)
-    assert run.canary.startswith("ARMOR-")
+    assert run.canary.startswith("RAMPART-")
     # The placeholder must never be sent raw.
     assert "{{CANARY}}" not in run.canary
 

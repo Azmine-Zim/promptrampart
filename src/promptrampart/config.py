@@ -1,6 +1,6 @@
 """Target configuration loading and validation.
 
-A target config is a small YAML file that tells PromptArmor which model to
+A target config is a small YAML file that tells promptrampart which model to
 attack and how to reach it. Example (Ollama):
 
     adapter: ollama

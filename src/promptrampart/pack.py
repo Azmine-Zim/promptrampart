@@ -45,7 +45,7 @@ class AttackPack:
 
 
 def _builtin_pack_path(name: str) -> Path:
-    return Path(str(resources.files("promptarmor") / "packs" / f"{name}.yaml"))
+    return Path(str(resources.files("promptrampart") / "packs" / f"{name}.yaml"))
 
 
 def load_pack(name_or_path: str) -> AttackPack:

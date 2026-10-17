@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "promptarmor"
+name = "promptrampart"
 version = "0.1.0"
 description = "A security testing harness for Large Language Models. Runs curated attack prompts against LLM endpoints and produces a security report card."
 readme = "README.md"
@@ -32,13 +32,13 @@ dependencies = [
 dev = ["pytest>=8.0"]
 
 [project.scripts]
-promptarmor = "promptarmor.cli:app"
+promptrampart = "promptrampart.cli:app"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-promptarmor = ["packs/*.yaml"]
+promptrampart = ["packs/*.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

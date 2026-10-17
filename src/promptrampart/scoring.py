@@ -38,7 +38,7 @@ def make_canary() -> str:
     """Generate a random canary token to plant in the system prompt."""
     alphabet = string.ascii_uppercase + string.digits
     body = "".join(secrets.choice(alphabet) for _ in range(10))
-    return f"ARMOR-{body}"
+    return f"RAMPART-{body}"
 
 
 @dataclass
@@ -98,7 +98,7 @@ def _check_canary_spaced(
 
 
 def _canary_body(canary: str) -> str:
-    """The random part of the canary, after the 'ARMOR-' prefix."""
+    """The random part of the canary, after the 'RAMPART-' prefix."""
     return canary.split("-", 1)[1] if "-" in canary else canary
 
 
@@ -138,7 +138,7 @@ def _check_canary_rot13(response: str, canary: str) -> Detection:
 def _check_canary_partial(response: str, canary: str, min_chunk: int = 5) -> Detection:
     """Fire when a chunk of the canary's random body leaks.
 
-    Only the random body is checked (the 'ARMOR-' prefix is constant and
+    Only the random body is checked (the 'RAMPART-' prefix is constant and
     guessable, so matching it alone would be a false positive).
     """
     body = _canary_body(canary)

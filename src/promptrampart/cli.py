@@ -1,4 +1,4 @@
-"""PromptArmor command line interface (typer + rich)."""
+"""promptrampart command line interface (typer + rich)."""
 
 from __future__ import annotations
 
@@ -9,14 +9,14 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from promptarmor import __version__
-from promptarmor.config import ConfigError, load_target_config
-from promptarmor.pack import PackError, load_pack
-from promptarmor.report import write_json
-from promptarmor.runner import AttackResult, run_pack
+from promptrampart import __version__
+from promptrampart.config import ConfigError, load_target_config
+from promptrampart.pack import PackError, load_pack
+from promptrampart.report import write_json
+from promptrampart.runner import AttackResult, run_pack
 
 app = typer.Typer(
-    name="promptarmor",
+    name="promptrampart",
     help=(
         "Security testing harness for LLMs. Runs curated attack prompts "
         "against a target model and reports which ones got through. "
@@ -38,8 +38,8 @@ _SEVERITY_STYLE = {
 
 @app.command()
 def version() -> None:
-    """Print the PromptArmor version."""
-    console.print(f"PromptArmor v{__version__}")
+    """Print the promptrampart version."""
+    console.print(f"promptrampart v{__version__}")
 
 
 @app.command()
@@ -107,7 +107,7 @@ def run(
             f"Target: [bold]{config.label}[/]\n"
             f"Pack:   [bold]{pack.name}[/] ({len(pack.attacks)} attacks)\n"
             f"[dim]Reminder: only test models you own or have permission to test.[/]",
-            title="PromptArmor",
+            title="promptrampart",
             border_style="blue",
         )
     )

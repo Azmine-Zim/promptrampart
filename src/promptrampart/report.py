@@ -10,9 +10,9 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from promptarmor import __version__
-from promptarmor.pack import VALID_SEVERITIES
-from promptarmor.runner import RunResult
+from promptrampart import __version__
+from promptrampart.pack import VALID_SEVERITIES
+from promptrampart.runner import RunResult
 
 SCHEMA_VERSION = 1
 
@@ -29,7 +29,7 @@ def run_to_dict(run: RunResult) -> dict:
 
     return {
         "schema_version": SCHEMA_VERSION,
-        "tool": {"name": "promptarmor", "version": __version__},
+        "tool": {"name": "promptrampart", "version": __version__},
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "target": run.target_label,
         "pack": run.pack_name,

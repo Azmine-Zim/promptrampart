@@ -1,6 +1,6 @@
-# PromptArmor
+# promptrampart
 
-A security testing harness for Large Language Models. PromptArmor fires a curated suite of attack prompts (prompt injection, jailbreaks, system prompt leakage, data exfiltration probes, role-play escapes) at a target model, scores the responses with rule-based detectors, and tells you which attacks got through.
+A security testing harness for Large Language Models. promptrampart fires a curated suite of attack prompts (prompt injection, jailbreaks, system prompt leakage, data exfiltration probes, role-play escapes) at a target model, scores the responses with rule-based detectors, and tells you which attacks got through.
 
 Think of it as a vulnerability scanner, but the target is an LLM instead of a web app.
 
@@ -33,7 +33,7 @@ A random canary token is planted in the system prompt before each run. If the mo
 
 ```
 pip install -e .
-promptarmor run --target configs/mock.yaml
+promptrampart run --target configs/mock.yaml
 ```
 
 That is the full offline demo, no server and no API key needed. The mock target is a deliberately naive model, so you will see some attacks pass and some break through.
@@ -42,16 +42,16 @@ To test a real local model with [Ollama](https://ollama.com):
 
 ```
 ollama pull llama3.2:1b
-promptarmor run --target configs/ollama.yaml
+promptrampart run --target configs/ollama.yaml
 ```
 
 Other useful commands:
 
 ```
-promptarmor packs                                   # list the attacks in the core pack
-promptarmor run -t configs/mock.yaml --show-responses
-promptarmor run -t configs/mock.yaml -c jailbreak   # run one category only
-promptarmor run -t configs/mock.yaml -o results.json  # export JSON results
+promptrampart packs                                   # list the attacks in the core pack
+promptrampart run -t configs/mock.yaml --show-responses
+promptrampart run -t configs/mock.yaml -c jailbreak   # run one category only
+promptrampart run -t configs/mock.yaml -o results.json  # export JSON results
 ```
 
 Exit code is 0 when the model resisted everything, 1 when at least one attack succeeded, so it drops straight into CI.
@@ -106,7 +106,7 @@ pytest
 
 ## Ethics
 
-PromptArmor is a defensive and educational tool. Use it only against models you own or have explicit permission to test. The attack prompts are well-known, publicly documented patterns included so that defenders can measure and improve model robustness.
+promptrampart is a defensive and educational tool. Use it only against models you own or have explicit permission to test. The attack prompts are well-known, publicly documented patterns included so that defenders can measure and improve model robustness.
 
 ## License
 

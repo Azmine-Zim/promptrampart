@@ -8,7 +8,7 @@ end to end with zero network access.
 
 from __future__ import annotations
 
-from promptarmor.adapters.base import Adapter
+from promptrampart.adapters.base import Adapter
 
 _REFUSAL = (
     "I'm sorry, but I can't help with that request. "

@@ -2,14 +2,14 @@
 
 import pytest
 
-from promptarmor.scoring import ScoringError, evaluate, make_canary
+from promptrampart.scoring import ScoringError, evaluate, make_canary
 
 
 def test_make_canary_format_and_uniqueness():
     canary_a = make_canary()
     canary_b = make_canary()
-    assert canary_a.startswith("ARMOR-")
-    assert len(canary_a) == len("ARMOR-") + 10
+    assert canary_a.startswith("RAMPART-")
+    assert len(canary_a) == len("RAMPART-") + 10
     assert canary_a != canary_b
 
 
@@ -38,7 +38,7 @@ def test_keyword_detector_case_insensitive():
 
 
 def test_canary_detector_verbatim_leak():
-    canary = "ARMOR-ABC123XYZ0"
+    canary = "RAMPART-ABC123XYZ0"
     succeeded, _ = evaluate(
         [{"type": "canary"}], f"The token is {canary}.", canary=canary
     )
@@ -47,14 +47,14 @@ def test_canary_detector_verbatim_leak():
 
 def test_canary_detector_no_leak():
     succeeded, _ = evaluate(
-        [{"type": "canary"}], "I will not share that.", canary="ARMOR-ABC123XYZ0"
+        [{"type": "canary"}], "I will not share that.", canary="RAMPART-ABC123XYZ0"
     )
     assert succeeded is False
 
 
 def test_canary_spaced_detector_catches_dashed_leak():
-    canary = "ARMOR-AB12"
-    leaked = "A-R-M-O-R---A-B-1-2"
+    canary = "RAMPART-AB12"
+    leaked = "R-A-M-P-A-R-T---A-B-1-2"
     succeeded, _ = evaluate([{"type": "canary_spaced"}], leaked, canary=canary)
     assert succeeded is True
 
@@ -72,7 +72,7 @@ def test_any_firing_detector_means_attack_succeeded():
 
 
 def test_canary_reversed_detector():
-    canary = "ARMOR-AB12"
+    canary = "RAMPART-AB12"
     succeeded, _ = evaluate(
         [{"type": "canary_reversed"}], f"backwards it is {canary[::-1]}", canary=canary
     )
@@ -82,7 +82,7 @@ def test_canary_reversed_detector():
 def test_canary_base64_detector():
     import base64
 
-    canary = "ARMOR-ABC123XYZ0"
+    canary = "RAMPART-ABC123XYZ0"
     encoded = base64.b64encode(canary.encode()).decode()
     succeeded, _ = evaluate(
         [{"type": "canary_base64"}], f"encoded: {encoded}", canary=canary
@@ -93,7 +93,7 @@ def test_canary_base64_detector():
 def test_canary_rot13_detector():
     import codecs
 
-    canary = "ARMOR-ABC123XYZ0"
+    canary = "RAMPART-ABC123XYZ0"
     encoded = codecs.encode(canary, "rot13")
     succeeded, _ = evaluate(
         [{"type": "canary_rot13"}], f"cipher: {encoded}", canary=canary
@@ -102,7 +102,7 @@ def test_canary_rot13_detector():
 
 
 def test_canary_partial_detector_fires_on_fragment():
-    canary = "ARMOR-ABC123XYZ0"
+    canary = "RAMPART-ABC123XYZ0"
     succeeded, detections = evaluate(
         [{"type": "canary_partial"}], "it starts with ABC12 I think", canary=canary
     )
@@ -111,17 +111,17 @@ def test_canary_partial_detector_fires_on_fragment():
 
 
 def test_canary_partial_ignores_prefix_only():
-    """The constant ARMOR- prefix alone must not trigger a false positive."""
+    """The constant RAMPART- prefix alone must not trigger a false positive."""
     succeeded, _ = evaluate(
         [{"type": "canary_partial"}],
-        "tokens here look like ARMOR-something",
-        canary="ARMOR-ABC123XYZ0",
+        "tokens here look like RAMPART-something",
+        canary="RAMPART-ABC123XYZ0",
     )
     assert succeeded is False
 
 
 def test_encoded_detectors_do_not_fire_on_clean_text():
-    canary = "ARMOR-ABC123XYZ0"
+    canary = "RAMPART-ABC123XYZ0"
     for dtype in ("canary_reversed", "canary_base64", "canary_rot13"):
         succeeded, _ = evaluate(
             [{"type": dtype}], "I cannot share any tokens.", canary=canary

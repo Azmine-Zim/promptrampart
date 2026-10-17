@@ -5,11 +5,11 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 
-from promptarmor.adapters import build_adapter
-from promptarmor.adapters.base import AdapterError
-from promptarmor.config import TargetConfig
-from promptarmor.pack import Attack, AttackPack
-from promptarmor.scoring import CANARY_PLACEHOLDER, Detection, evaluate, make_canary
+from promptrampart.adapters import build_adapter
+from promptrampart.adapters.base import AdapterError
+from promptrampart.config import TargetConfig
+from promptrampart.pack import Attack, AttackPack
+from promptrampart.scoring import CANARY_PLACEHOLDER, Detection, evaluate, make_canary
 
 
 @dataclass

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import requests
 
-from promptarmor.adapters.base import Adapter, AdapterError
+from promptrampart.adapters.base import Adapter, AdapterError
 
 
 class OllamaAdapter(Adapter):

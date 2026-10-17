@@ -1,4 +1,4 @@
-"""PromptArmor: a security testing harness for Large Language Models.
+"""promptrampart: a security testing harness for Large Language Models.
 
 Runs curated attack prompts (prompt injection, jailbreaks, system prompt
 leakage, data exfiltration probes, role-play escapes) against LLM endpoints

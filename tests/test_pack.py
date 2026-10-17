@@ -2,7 +2,7 @@
 
 import pytest
 
-from promptarmor.pack import PackError, load_pack
+from promptrampart.pack import PackError, load_pack
 
 
 def test_builtin_core_pack_loads():

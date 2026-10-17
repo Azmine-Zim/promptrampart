@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from promptarmor.config import TargetConfig
+from promptrampart.config import TargetConfig
 
 
 class AdapterError(Exception):

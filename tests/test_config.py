@@ -2,7 +2,7 @@
 
 import pytest
 
-from promptarmor.config import ConfigError, load_target_config
+from promptrampart.config import ConfigError, load_target_config
 
 
 def write_config(tmp_path, text):

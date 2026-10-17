@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from promptarmor.adapters.base import Adapter, AdapterError
-from promptarmor.adapters.mock import MockAdapter
-from promptarmor.adapters.ollama import OllamaAdapter
-from promptarmor.config import TargetConfig
+from promptrampart.adapters.base import Adapter, AdapterError
+from promptrampart.adapters.mock import MockAdapter
+from promptrampart.adapters.ollama import OllamaAdapter
+from promptrampart.config import TargetConfig
 
 _REGISTRY: dict[str, type[Adapter]] = {
     "ollama": OllamaAdapter,

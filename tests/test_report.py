@@ -2,10 +2,10 @@
 
 import json
 
-from promptarmor.config import TargetConfig
-from promptarmor.pack import load_pack
-from promptarmor.report import SCHEMA_VERSION, run_to_dict, write_json
-from promptarmor.runner import run_pack
+from promptrampart.config import TargetConfig
+from promptrampart.pack import load_pack
+from promptrampart.report import SCHEMA_VERSION, run_to_dict, write_json
+from promptrampart.runner import run_pack
 
 
 def make_run():
@@ -17,7 +17,7 @@ def test_run_to_dict_shape():
     run = make_run()
     data = run_to_dict(run)
     assert data["schema_version"] == SCHEMA_VERSION
-    assert data["tool"]["name"] == "promptarmor"
+    assert data["tool"]["name"] == "promptrampart"
     assert data["target"] == "mock:naive-demo"
     assert data["pack"] == "core"
     assert len(data["results"]) == len(run.results)
