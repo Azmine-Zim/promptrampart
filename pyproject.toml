@@ -38,7 +38,7 @@ promptrampart = "promptrampart.cli:app"
 where = ["src"]
 
 [tool.setuptools.package-data]
-promptrampart = ["packs/*.yaml"]
+promptrampart = ["packs/*.yaml", "templates/*.j2"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

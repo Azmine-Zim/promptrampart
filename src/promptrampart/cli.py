@@ -12,7 +12,7 @@ from rich.table import Table
 from promptrampart import __version__
 from promptrampart.config import ConfigError, load_target_config
 from promptrampart.pack import PackError, load_pack
-from promptrampart.report import write_json
+from promptrampart.report import write_html, write_json
 from promptrampart.runner import AttackResult, run_pack
 
 app = typer.Typer(
@@ -76,6 +76,9 @@ def run(
     ),
     json_out: Path = typer.Option(
         None, "--json-out", "-o", help="Write full results to this JSON file."
+    ),
+    html_out: Path = typer.Option(
+        None, "--html-out", "-H", help="Write an HTML report card to this file."
     ),
     category: str = typer.Option(
         None,
@@ -157,6 +160,10 @@ def run(
     if json_out is not None:
         written = write_json(run_result, json_out)
         console.print(f"JSON results written to [bold]{written}[/]")
+
+    if html_out is not None:
+        written = write_html(run_result, html_out)
+        console.print(f"HTML report card written to [bold]{written}[/]")
 
     if run_result.failed > 0:
         raise typer.Exit(code=1)

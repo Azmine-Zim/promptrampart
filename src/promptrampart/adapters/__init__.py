@@ -5,10 +5,12 @@ from __future__ import annotations
 from promptrampart.adapters.base import Adapter, AdapterError
 from promptrampart.adapters.mock import MockAdapter
 from promptrampart.adapters.ollama import OllamaAdapter
+from promptrampart.adapters.openai import OpenAIAdapter
 from promptrampart.config import TargetConfig
 
 _REGISTRY: dict[str, type[Adapter]] = {
     "ollama": OllamaAdapter,
+    "openai": OpenAIAdapter,
     "mock": MockAdapter,
 }
 
@@ -25,4 +27,11 @@ def build_adapter(config: TargetConfig) -> Adapter:
     return adapter_cls(config)
 
 
-__all__ = ["Adapter", "AdapterError", "OllamaAdapter", "MockAdapter", "build_adapter"]
+__all__ = [
+    "Adapter",
+    "AdapterError",
+    "OllamaAdapter",
+    "OpenAIAdapter",
+    "MockAdapter",
+    "build_adapter",
+]

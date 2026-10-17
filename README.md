@@ -4,7 +4,7 @@ A security testing harness for Large Language Models. PromptRampart fires a cura
 
 Think of it as a vulnerability scanner, but the target is an LLM instead of a web app.
 
-> Status: M2. Current features: config loading, Ollama adapter, offline mock adapter, 48-attack core pack across five categories, rule-based scoring with canary tokens (verbatim, spaced, reversed, base64, ROT13, partial-leak detection), JSON results export, category filtering. HTML report card and OpenAI-compatible adapter are on the roadmap (M3).
+> Status: M3. Current features: Ollama, OpenAI-compatible and offline mock adapters, 48-attack core pack across five categories, rule-based scoring with canary tokens (verbatim, spaced, reversed, base64, ROT13, partial-leak detection), JSON results export, HTML report card with letter grade, category filtering.
 
 ## How it works
 
@@ -24,7 +24,7 @@ target config (YAML)        attack pack (YAML)
                            +-----------+
                                   |
                                   v
-                          console scorecard
+               console scorecard + JSON + HTML report card
 ```
 
 A random canary token is planted in the system prompt before each run. If the model ever repeats that token, verbatim or spelled out with separators, the leak is detected automatically.
@@ -47,12 +47,24 @@ promptrampart run --target configs/ollama.yaml
 
 Other useful commands:
 
+To test an OpenAI-compatible API (OpenAI, LM Studio, vLLM, OpenRouter and friends), set your key in an environment variable first, never in the config file:
+
 ```
-promptrampart packs                                   # list the attacks in the core pack
+$env:OPENAI_API_KEY = "sk-..."          # PowerShell
+promptrampart run --target configs/openai.yaml
+```
+
+Other useful commands:
+
+```
+promptrampart packs                                     # list the attacks in the core pack
 promptrampart run -t configs/mock.yaml --show-responses
-promptrampart run -t configs/mock.yaml -c jailbreak   # run one category only
+promptrampart run -t configs/mock.yaml -c jailbreak     # run one category only
 promptrampart run -t configs/mock.yaml -o results.json  # export JSON results
+promptrampart run -t configs/mock.yaml -H report.html   # HTML report card
 ```
+
+The HTML report card shows an overall letter grade (a single breached critical attack caps the grade at C), per-category resistance bars, severity breakdown, and full transcripts of every attack.
 
 Exit code is 0 when the model resisted everything, 1 when at least one attack succeeded, so it drops straight into CI.
 

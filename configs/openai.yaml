@@ -1,0 +1,12 @@
+# Target config for an OpenAI-compatible API.
+# The API key is read from the environment variable named below.
+# Never put the key itself in this file.
+#   PowerShell:  $env:OPENAI_API_KEY = "..."
+#   bash:        export OPENAI_API_KEY="..."
+adapter: openai
+model: gpt-4o-mini
+base_url: https://api.openai.com/v1
+api_key_env: OPENAI_API_KEY
+timeout: 120
+options:
+  temperature: 0.0

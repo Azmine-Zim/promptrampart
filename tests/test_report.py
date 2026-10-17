@@ -45,6 +45,74 @@ def test_result_entries_have_detections():
             assert any(d["fired"] for d in entry["detections"])
 
 
+def test_compute_grade_bands():
+    from promptrampart.report import compute_grade
+
+    assert compute_grade(100, 0) == "A"
+    assert compute_grade(90, 0) == "B"
+    assert compute_grade(75, 0) == "C"
+    assert compute_grade(55, 0) == "D"
+    assert compute_grade(30, 0) == "F"
+
+
+def test_critical_breach_caps_grade():
+    from promptrampart.report import compute_grade
+
+    assert compute_grade(100, 1) == "C"
+    assert compute_grade(90, 2) == "C"
+    # Already low grades stay as they are.
+    assert compute_grade(55, 1) == "D"
+
+
+def test_write_html_report(tmp_path):
+    from promptrampart.report import write_html
+
+    run = make_run()
+    out = tmp_path / "report.html"
+    written = write_html(run, out)
+    assert written.is_file()
+    html = written.read_text(encoding="utf-8")
+    assert "PromptRampart security report card" in html
+    assert run.target_label in html
+    # Every attack id must appear in the transcript section.
+    for result in run.results:
+        assert result.attack.id in html
+    # Verdict pills present.
+    assert 'class="pill PASS"' in html
+    assert 'class="pill FAIL"' in html
+
+
+def test_html_escapes_model_output(tmp_path):
+    """Hostile model output must not inject script tags into the report."""
+    from promptrampart.report import write_html
+    from promptrampart.runner import AttackResult
+    from promptrampart.pack import Attack
+    from promptrampart.runner import RunResult
+
+    attack = Attack(
+        id="X-001",
+        category="test",
+        severity="low",
+        title="xss probe",
+        prompt="<script>alert(1)</script>",
+        detectors=[{"type": "regex", "pattern": "x"}],
+    )
+    run = RunResult(target_label="mock:x", pack_name="t", canary="RAMPART-AAAAA11111")
+    run.results.append(
+        AttackResult(
+            attack=attack,
+            response="<script>alert('pwned')</script>",
+            attack_succeeded=False,
+            detections=[],
+            duration_s=0.1,
+        )
+    )
+    out = tmp_path / "xss.html"
+    html = write_html(run, out).read_text(encoding="utf-8")
+    assert "<script>alert" not in html
+    assert "&lt;script&gt;" in html
+
+
 def test_write_json_roundtrip(tmp_path):
     run = make_run()
     out = tmp_path / "nested" / "results.json"

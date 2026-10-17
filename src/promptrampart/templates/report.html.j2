@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PromptRampart report: {{ target }}</title>
+<style>
+  :root { --pass:#1a7f37; --fail:#cf222e; --error:#9a6700; --bg:#0d1117; --card:#161b22; --text:#e6edf3; --dim:#8b949e; --border:#30363d; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background:var(--bg); color:var(--text); }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 60px; }
+  h1 { margin: 0 0 4px; font-size: 26px; }
+  h2 { margin: 36px 0 12px; font-size: 19px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  .sub { color: var(--dim); font-size: 14px; margin-bottom: 24px; }
+  .grade-row { display:flex; gap:16px; flex-wrap:wrap; margin: 20px 0; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:16px 20px; flex:1; min-width:150px; }
+  .card .num { font-size: 30px; font-weight: 700; }
+  .card .lbl { color: var(--dim); font-size: 13px; }
+  .grade { font-size: 44px; font-weight: 800; }
+  .grade.A { color: var(--pass); } .grade.B { color:#3fb950; } .grade.C { color:#d29922; } .grade.D { color:#f0883e; } .grade.F { color: var(--fail); }
+  table { width:100%; border-collapse: collapse; font-size:14px; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--border); }
+  th { color: var(--dim); font-weight:600; font-size: 12px; text-transform: uppercase; }
+  .pill { display:inline-block; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:700; }
+  .pill.PASS { background:rgba(26,127,55,.2); color:#3fb950; }
+  .pill.FAIL { background:rgba(207,34,46,.2); color:#f85149; }
+  .pill.ERROR { background:rgba(154,103,0,.2); color:#d29922; }
+  .sev { font-size: 12px; font-weight:600; }
+  .sev.low{color:#58a6ff} .sev.medium{color:#d29922} .sev.high{color:#f0883e} .sev.critical{color:#f85149}
+  .bar { height: 8px; border-radius:4px; background: rgba(207,34,46,.3); overflow:hidden; }
+  .bar > div { height:100%; background: var(--pass); }
+  details { margin: 10px 0; background:var(--card); border:1px solid var(--border); border-radius:8px; }
+  summary { cursor:pointer; padding:10px 14px; font-size:14px; }
+  .transcript { padding: 0 16px 14px; font-size: 13px; }
+  .transcript .label { color:var(--dim); font-size:11px; text-transform:uppercase; margin:10px 0 4px; }
+  .transcript pre { white-space:pre-wrap; word-break:break-word; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:10px; margin:0; }
+  .foot { margin-top: 40px; color: var(--dim); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>PromptRampart security report card</h1>
+  <div class="sub">
+    Target: <strong>{{ target }}</strong> &middot; Pack: <strong>{{ pack }}</strong>
+    &middot; Generated: {{ generated_at }} &middot; promptrampart v{{ version }}
+  </div>
+
+  <div class="grade-row">
+    <div class="card"><div class="grade {{ grade }}">{{ grade }}</div><div class="lbl">overall grade</div></div>
+    <div class="card"><div class="num">{{ summary.resistance_rate_pct }}%</div><div class="lbl">resistance rate</div></div>
+    <div class="card"><div class="num" style="color:var(--pass)">{{ summary.resisted }}</div><div class="lbl">resisted (PASS)</div></div>
+    <div class="card"><div class="num" style="color:var(--fail)">{{ summary.breached }}</div><div class="lbl">breached (FAIL)</div></div>
+    <div class="card"><div class="num" style="color:var(--error)">{{ summary.errors }}</div><div class="lbl">errors</div></div>
+  </div>
+
+  <h2>By category</h2>
+  <table>
+    <tr><th>Category</th><th>Resisted</th><th>Breached</th><th>Errors</th><th style="width:34%">Resistance</th></tr>
+    {% for name, stats in summary.by_category.items() %}
+    {% set scored = stats.PASS + stats.FAIL %}
+    <tr>
+      <td>{{ name }}</td>
+      <td>{{ stats.PASS }}</td>
+      <td>{{ stats.FAIL }}</td>
+      <td>{{ stats.ERROR }}</td>
+      <td><div class="bar"><div style="width: {{ (stats.PASS / scored * 100) | round(0) if scored else 0 }}%"></div></div></td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <h2>Breached attacks by severity</h2>
+  <table>
+    <tr><th>Severity</th><th>Breached count</th></tr>
+    {% for sev, count in summary.breached_by_severity.items() %}
+    <tr><td><span class="sev {{ sev }}">{{ sev }}</span></td><td>{{ count }}</td></tr>
+    {% endfor %}
+  </table>
+
+  <h2>All results</h2>
+  {% for r in results %}
+  <details {% if r.verdict == "FAIL" %}open{% endif %}>
+    <summary>
+      <span class="pill {{ r.verdict }}">{{ r.verdict }}</span>
+      <strong>{{ r.id }}</strong> &middot; {{ r.category }} &middot;
+      <span class="sev {{ r.severity }}">{{ r.severity }}</span>
+      {% if r.owasp %}&middot; {{ r.owasp }}{% endif %}
+      &middot; {{ r.title }}
+    </summary>
+    <div class="transcript">
+      <div class="label">Attack prompt</div>
+      <pre>{{ r.prompt }}</pre>
+      {% if r.error %}
+      <div class="label">Error</div>
+      <pre>{{ r.error }}</pre>
+      {% else %}
+      <div class="label">Model response</div>
+      <pre>{{ r.response }}</pre>
+      <div class="label">Detectors</div>
+      <pre>{% for d in r.detections %}{{ "FIRED " if d.fired else "quiet " }} {{ d.type }}: {{ d.detail }}
+{% endfor %}</pre>
+      {% endif %}
+    </div>
+  </details>
+  {% endfor %}
+
+  <div class="foot">
+    PromptRampart is a defensive, educational tool. Only test models you own or
+    have explicit permission to test. Canary token for this run: {{ canary }}
+  </div>
+</div>
+</body>
+</html>
