@@ -1,6 +1,6 @@
-# promptrampart
+# PromptRampart
 
-A security testing harness for Large Language Models. promptrampart fires a curated suite of attack prompts (prompt injection, jailbreaks, system prompt leakage, data exfiltration probes, role-play escapes) at a target model, scores the responses with rule-based detectors, and tells you which attacks got through.
+A security testing harness for Large Language Models. PromptRampart fires a curated suite of attack prompts (prompt injection, jailbreaks, system prompt leakage, data exfiltration probes, role-play escapes) at a target model, scores the responses with rule-based detectors, and tells you which attacks got through.
 
 Think of it as a vulnerability scanner, but the target is an LLM instead of a web app.
 
@@ -106,7 +106,7 @@ pytest
 
 ## Ethics
 
-promptrampart is a defensive and educational tool. Use it only against models you own or have explicit permission to test. The attack prompts are well-known, publicly documented patterns included so that defenders can measure and improve model robustness.
+PromptRampart is a defensive and educational tool. Use it only against models you own or have explicit permission to test. The attack prompts are well-known, publicly documented patterns included so that defenders can measure and improve model robustness.
 
 ## License
 

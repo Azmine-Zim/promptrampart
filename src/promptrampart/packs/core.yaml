@@ -1,4 +1,4 @@
-# promptrampart core attack pack (M1 starter set: 10 prompts).
+# PromptRampart core attack pack (48 attacks across five categories).
 # All patterns below are publicly documented attack classes, aligned with
 # the OWASP Top 10 for LLM Applications (LLM01 Prompt Injection, LLM02
 # Sensitive Information Disclosure / system prompt leakage, etc).
