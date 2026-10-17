@@ -1,0 +1,9 @@
+# Target config for a local Ollama model.
+# Start Ollama first: ollama serve
+# Pull a small model:  ollama pull llama3.2:1b
+adapter: ollama
+model: llama3.2:1b
+base_url: http://localhost:11434
+timeout: 120
+options:
+  temperature: 0.0

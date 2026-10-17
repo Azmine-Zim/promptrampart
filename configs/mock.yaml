@@ -1,0 +1,4 @@
+# Offline mock target. Needs no server and no API key.
+# Useful for trying the tool and for CI.
+adapter: mock
+model: naive-demo

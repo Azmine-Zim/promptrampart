@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# Project outputs
+results/
+*.report.html
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Local scratch files
+brief_extracted.txt
+*.docx
