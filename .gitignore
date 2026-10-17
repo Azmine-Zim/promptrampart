@@ -31,3 +31,5 @@ Thumbs.db
 # Local scratch files
 brief_extracted.txt
 *.docx
+_*.ps1
+_*.py
