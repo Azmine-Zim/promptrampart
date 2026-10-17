@@ -12,6 +12,7 @@ from rich.table import Table
 from promptarmor import __version__
 from promptarmor.config import ConfigError, load_target_config
 from promptarmor.pack import PackError, load_pack
+from promptarmor.report import write_json
 from promptarmor.runner import AttackResult, run_pack
 
 app = typer.Typer(
@@ -73,6 +74,15 @@ def run(
     show_responses: bool = typer.Option(
         False, "--show-responses", help="Print each model response in full."
     ),
+    json_out: Path = typer.Option(
+        None, "--json-out", "-o", help="Write full results to this JSON file."
+    ),
+    category: str = typer.Option(
+        None,
+        "--category",
+        "-c",
+        help="Only run attacks from this category (e.g. jailbreak).",
+    ),
 ) -> None:
     """Run an attack pack against a target model and print the scorecard."""
     try:
@@ -81,6 +91,16 @@ def run(
     except (ConfigError, PackError) as exc:
         console.print(f"[bold red]Error:[/] {exc}")
         raise typer.Exit(code=2)
+
+    if category:
+        available = sorted({attack.category for attack in pack.attacks})
+        pack.attacks = [a for a in pack.attacks if a.category == category]
+        if not pack.attacks:
+            console.print(
+                f"[bold red]Error:[/] no attacks in category '{category}'. "
+                f"Available: {', '.join(available)}"
+            )
+            raise typer.Exit(code=2)
 
     console.print(
         Panel(
@@ -133,6 +153,10 @@ def run(
             border_style=verdict_style,
         )
     )
+
+    if json_out is not None:
+        written = write_json(run_result, json_out)
+        console.print(f"JSON results written to [bold]{written}[/]")
 
     if run_result.failed > 0:
         raise typer.Exit(code=1)

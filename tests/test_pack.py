@@ -8,8 +8,18 @@ from promptarmor.pack import PackError, load_pack
 def test_builtin_core_pack_loads():
     pack = load_pack("core")
     assert pack.name == "core"
-    assert len(pack.attacks) >= 10
+    # M2 scope: 40 to 60 curated attacks.
+    assert 40 <= len(pack.attacks) <= 60
     assert "{{CANARY}}" in pack.default_system_prompt
+
+
+def test_each_category_has_enough_coverage():
+    pack = load_pack("core")
+    counts = {}
+    for attack in pack.attacks:
+        counts[attack.category] = counts.get(attack.category, 0) + 1
+    for category, count in counts.items():
+        assert count >= 8, f"category '{category}' only has {count} attacks"
 
 
 def test_core_pack_covers_required_categories():

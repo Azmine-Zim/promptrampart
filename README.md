@@ -4,7 +4,7 @@ A security testing harness for Large Language Models. PromptArmor fires a curate
 
 Think of it as a vulnerability scanner, but the target is an LLM instead of a web app.
 
-> Status: M1 (early). Current features: config loading, Ollama adapter, offline mock adapter, 10-attack core pack, rule-based scoring with canary tokens, console scorecard. HTML report card and OpenAI-compatible adapter are on the roadmap.
+> Status: M2. Current features: config loading, Ollama adapter, offline mock adapter, 48-attack core pack across five categories, rule-based scoring with canary tokens (verbatim, spaced, reversed, base64, ROT13, partial-leak detection), JSON results export, category filtering. HTML report card and OpenAI-compatible adapter are on the roadmap (M3).
 
 ## How it works
 
@@ -48,23 +48,25 @@ promptarmor run --target configs/ollama.yaml
 Other useful commands:
 
 ```
-promptarmor packs                 # list the attacks in the core pack
+promptarmor packs                                   # list the attacks in the core pack
 promptarmor run -t configs/mock.yaml --show-responses
+promptarmor run -t configs/mock.yaml -c jailbreak   # run one category only
+promptarmor run -t configs/mock.yaml -o results.json  # export JSON results
 ```
 
 Exit code is 0 when the model resisted everything, 1 when at least one attack succeeded, so it drops straight into CI.
 
 ## Attack pack
 
-The core pack currently ships 10 attacks across five categories, each aligned with the OWASP Top 10 for LLM Applications:
+The core pack currently ships 48 attacks across five categories, each aligned with the OWASP Top 10 for LLM Applications:
 
-| Category | OWASP | Examples |
-|---|---|---|
-| prompt_injection | LLM01 | direct override, injection hidden in quoted content |
-| jailbreak | LLM01 | DAN persona, developer mode pretext |
-| system_prompt_leak | LLM07 | verbatim dump request, translation trick |
-| data_exfiltration | LLM02 | canary token phishing, encoded exfiltration |
-| roleplay_escape | LLM01 | grandma pretext, fictional unrestricted AI |
+| Category | Count | OWASP | Examples |
+|---|---|---|---|
+| prompt_injection | 12 | LLM01 | direct override, fake system message, base64 smuggling, payload splitting, delimiter escape |
+| jailbreak | 10 | LLM01 | DAN/STAN/AIM personas, developer mode, token pressure, dual-channel responses |
+| system_prompt_leak | 8 | LLM07 | verbatim dump, translation trick, poem trick, fake transparency law, JSON config dump |
+| data_exfiltration | 9 | LLM02 | canary phishing, base64/ROT13/reversed encoding, acrostic trick, markdown link exfiltration |
+| roleplay_escape | 9 | LLM01 | grandma pretext, actor rehearsal, dream framing, nested simulation, villain monologue |
 
 All patterns are publicly documented attack classes. This project does not develop novel exploits.
 
@@ -87,7 +89,7 @@ attacks:
         pattern: '\bBREACHED\b'
 ```
 
-Detector types: `regex`, `keyword` (case-insensitive list), `canary` (verbatim token leak), `canary_spaced` (token leaked with separators between characters).
+Detector types: `regex`, `keyword` (case-insensitive list), `canary` (verbatim token leak), `canary_spaced` (separators between characters), `canary_reversed` (spelled backwards), `canary_base64`, `canary_rot13` (encoded leaks), `canary_partial` (a fragment of the token's random body leaks).
 
 ## Running the tests
 
