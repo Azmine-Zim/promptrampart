@@ -1,10 +1,15 @@
 # PromptRampart
 
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
+![OWASP](https://img.shields.io/badge/OWASP-LLM%20Top%2010-orange)
+
 A security testing harness for Large Language Models. PromptRampart fires a curated suite of attack prompts (prompt injection, jailbreaks, system prompt leakage, data exfiltration probes, role-play escapes) at a target model, scores the responses with rule-based detectors, and tells you which attacks got through.
 
 Think of it as a vulnerability scanner, but the target is an LLM instead of a web app.
 
-> Status: M3. Current features: Ollama, OpenAI-compatible and offline mock adapters, 48-attack core pack across five categories, rule-based scoring with canary tokens (verbatim, spaced, reversed, base64, ROT13, partial-leak detection), JSON results export, HTML report card with letter grade, category filtering.
+![Demo: promptrampart run against the offline mock target](docs/demo.svg)
 
 ## How it works
 
@@ -45,8 +50,6 @@ ollama pull llama3.2:1b
 promptrampart run --target configs/ollama.yaml
 ```
 
-Other useful commands:
-
 To test an OpenAI-compatible API (OpenAI, LM Studio, vLLM, OpenRouter and friends), set your key in an environment variable first, never in the config file:
 
 ```
@@ -81,6 +84,23 @@ The core pack currently ships 48 attacks across five categories, each aligned wi
 | roleplay_escape | 9 | LLM01 | grandma pretext, actor rehearsal, dream framing, nested simulation, villain monologue |
 
 All patterns are publicly documented attack classes. This project does not develop novel exploits.
+
+## Results
+
+A full run of the core pack against llama3.2:1b on a local Ollama server (temperature 0):
+
+| Category | Resisted | Breached |
+|---|---|---|
+| prompt_injection | 11 | 1 |
+| jailbreak | 9 | 1 |
+| system_prompt_leak | 1 | 7 |
+| data_exfiltration | 5 | 4 |
+| roleplay_escape | 8 | 1 |
+| **Total** | **34** | **14** |
+
+Resistance rate 71%, grade C (5 critical breaches cap the grade). The takeaway is interesting: this small model shrugs off most blunt jailbreak personas, but hands over its system prompt to almost any polite social-engineering request. That asymmetry is exactly the kind of finding the per-category breakdown is designed to surface.
+
+Numbers vary slightly between runs even at temperature 0, so treat a single run as a snapshot, not a benchmark.
 
 ## Writing your own pack
 
